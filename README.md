@@ -1,3 +1,12 @@
+cordova-plugin-socrates3-background-geolocation
+==============================
+
+Fork notice
+==============================
+
+This is fork of [mauron85 cordova-backgroud-geolocation](https://github.com/mauron85/cordova-plugin-background-geolocation). Changes are made to avoid Foreground Android service, and to try to reduce battery-usage.
+
+
 cordova-plugin-mauron85-background-geolocation
 ==============================
 
@@ -234,7 +243,7 @@ In Windows Phone, the underlying GeoLocator you can choose to use 'DesiredAccura
 
 ## Development
 
-There many works of original christocracy's plugin. The most interesting repos I've found are: 
+There many works of original christocracy's plugin. The most interesting repos I've found are:
 * [huttj](https://github.com/huttj/cordova-plugin-background-geolocation)
 * [erikkemperman](https://github.com/erikkemperman/cordova-plugin-background-geolocation/)
 * [codebling](https://github.com/codebling/cordova-plugin-background-geolocation)
@@ -246,7 +255,7 @@ this version and adopt all those cool changes. You're more then welcome to pull 
 
 ### [0.4.2] - 2015-09-30
 #### Added
-- Android open activity when notification clicked [69989e79a8a67485fc88463eec8d69bb713c2dbe](https://github.com/erikkemperman/cordova-plugin-background-geolocation/commit/69989e79a8a67485fc88463eec8d69bb713c2dbe) 
+- Android open activity when notification clicked [69989e79a8a67485fc88463eec8d69bb713c2dbe](https://github.com/erikkemperman/cordova-plugin-background-geolocation/commit/69989e79a8a67485fc88463eec8d69bb713c2dbe)
 
 #### Fixed
 - Android duplicate desiredAccuracy extra

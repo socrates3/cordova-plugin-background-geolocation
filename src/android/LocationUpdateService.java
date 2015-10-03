@@ -198,7 +198,7 @@ public class LocationUpdateService extends Service implements LocationListener {
             isDebugging = Boolean.parseBoolean(intent.getStringExtra("isDebugging"));
             notificationTitle = intent.getStringExtra("notificationTitle");
             notificationText = intent.getStringExtra("notificationText");
-            
+
             activity = intent.getStringExtra("activity");
             Log.d( TAG, "Got activity" + activity );
             Class<?> activityClass = null;
@@ -227,7 +227,7 @@ public class LocationUpdateService extends Service implements LocationListener {
                 notification = buildForegroundNotificationCompat(builder);
             }
             notification.flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_FOREGROUND_SERVICE | Notification.FLAG_NO_CLEAR;
-            startForeground(startId, notification);
+            //startForeground(startId, notification);
         }
         Log.i(TAG, "- url: " + url);
         Log.i(TAG, "- params: " + params.toString());
@@ -784,7 +784,7 @@ public class LocationUpdateService extends Service implements LocationListener {
                 Log.w(TAG, "- Something bad happened while removing proximity-alert");
             }
         }
-        stopForeground(true);
+        //stopForeground(true);
         wakeLock.release();
     }
 
