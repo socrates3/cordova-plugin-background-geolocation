@@ -2,6 +2,8 @@ AbstractLocationService.java --> //startForeground(startId, notification);
 DistanceFilterLocationService.java --> //stopForeground(true);
 FusedLocationService.java --> //stopForeground(true);
 
+example/SampleApp/scripts/install_plugins.js --> "cordova-plugin-socrates3-background-geolocation"
+
 cordova-plugin-socrates3-background-geolocation
 ==============================
 
