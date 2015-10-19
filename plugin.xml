@@ -3,7 +3,7 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
         id="cordova-plugin-socrates3-background-geolocation"
-        version="0.5.4">
+        version="0.6.0">
     <name>CDVBackgroundGeoLocation</name>
     <description>Cordova Background GeoLocation Plugin</description>
     <license>Apache-2.0</license>
@@ -14,7 +14,7 @@
     </engines>
 
     <js-module src="www/backgroundGeoLocation.js" name="backgroundGeoLocation">
-        <clobbers target="plugins.backgroundGeoLocation"/>
+        <clobbers target="backgroundGeoLocation"/>
     </js-module>
 
     <!-- android -->
@@ -48,6 +48,7 @@
         <config-file target="AndroidManifest.xml" parent="/manifest">
             <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
             <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
             <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"/>
             <uses-permission android:name="android.permission.INTERNET"/>
             <uses-permission android:name="android.permission.WAKE_LOCK"/>

@@ -207,7 +207,7 @@ public class FusedLocationService extends com.tenforwardconsulting.cordova.bgloc
         unregisterReceiver(startRecordingReceiver);
         unregisterReceiver(stopRecordingReceiver);
         locationClientAPI.disconnect();
-        stopForeground(true);
+        //stopForeground(true);
     }
 
     //@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)

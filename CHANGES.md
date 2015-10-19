@@ -1,5 +1,13 @@
 ## Changelog
 
+### [0.6.0] - 2015-10-17
+#### Changed
+- deprecating window.plugins clobber
+- SampleApp updates
+
+#### Added
+- Android showLocationSettings and watchLocationMode
+
 ### [0.5.4] - 2015-10-13
 #### Changed
 - Android only cosmetic changes, but we need stable base

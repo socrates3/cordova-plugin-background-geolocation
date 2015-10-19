@@ -525,7 +525,7 @@ public class DistanceFilterLocationService extends com.tenforwardconsulting.cord
                 Log.w(TAG, "- Something bad happened while removing proximity-alert");
             }
         }
-        stopForeground(true);
+        //stopForeground(true);
         wakeLock.release();
     }
 
