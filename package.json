@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-socrates3-background-geolocation",
-  "version": "0.6.0",
+  "version": "0.7.2",
   "description": "Cordova Background GeoLocation Plugin",
   "cordova": {
     "id": "cordova-plugin-socrates3-background-geolocation",

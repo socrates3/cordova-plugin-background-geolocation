@@ -40,12 +40,6 @@ var ENV = (function() {
     };
 })();
 
-indexed(ENV.dbName).create(function (err) {
-    if (err) {
-        console.error(err);
-    }
-});
-
 var app = {
     /**
     * @property {google.maps.Map} map
@@ -86,8 +80,8 @@ var app = {
             salt = new Date().getTime();
             localStorage.setItem('salt', salt);
         }
+        this.online = false;
         this.salt = salt;
-        this.db = indexed(ENV.dbName);
         this.bindEvents();
         google.maps.event.addDomListener(window, 'load', app.initializeMap);
     },
@@ -152,13 +146,22 @@ var app = {
     },
     // deviceready Event Handler
     //
-    // The scope of 'this' is the event. In order to call the 'receivedEvent'
-    // function, we must explicitly call 'app.receivedEvent(...);'
+    // The scope of 'this' is the event.
     onDeviceReady: function() {
-        app.receivedEvent('deviceready');
+        app.ready = true;
+        indexed(ENV.dbName).create(function (err) {
+            if (err) {
+                console.error(err);
+            }
+        });
+        app.db = indexed(ENV.dbName);
         window.addEventListener('batterystatus', app.onBatteryStatus, false);
         app.configureBackgroundGeoLocation();
+        backgroundGeoLocation.getLocations(app.postLocationsWasKilled);
         backgroundGeoLocation.watchLocationMode(app.onLocationCheck);
+        if (app.online && app.wasNotReady) {
+            app.postLocationsWasOffline()
+        }
     },
     onLocationCheck: function (enabled) {
         if (app.isTracking && !enabled) {
@@ -177,40 +180,27 @@ var app = {
     },
     onOnline: function() {
         console.log('Online');
-        app.db.find({}, function (err, locations) {
-            if (err) {
-                console.error('[ERROR]: while retrieving location data', err);
-            }
-            // nice recursion to prevent burst
-            (function postOneByOne (locations) {
-                var location = locations.pop();
-                if (!location) {
-                    return;
-                }
-                app.postLocation(location)
-                .done(function () {
-                    app.db.delete({ _id: location._id }, function (err) {
-                        if (err) {
-                            console.error('[ERROR]: deleting row %s', location._id, err);
-                        }
-                    });
-                })
-                .always(function () {
-                    postOneByOne(locations);
-                });
-            })(locations || []);
-        });
+        app.online = true;
+        if (!app.ready) {
+            app.wasNotReady = true;
+            return;
+        }
+        app.postLocationsWasOffline();
     },
     onOffline: function() {
         console.log('Offline');
+        app.online = false;
     },
-    configureBackgroundGeoLocation: function() {
-        var anonDevice = {
+    getDeviceInfo: function () {
+        return {
             model: device.model,
             version: device.version,
             platform: device.platform,
             uuid: md5([device.uuid, this.salt].join())
         };
+    },
+    configureBackgroundGeoLocation: function() {
+        var anonDevice = app.getDeviceInfo();
 
         /**
         * This would be your own callback for Ajax-requests after POSTing background geolocation to your server.
@@ -275,14 +265,14 @@ var app = {
             var center = new google.maps.LatLng(location.latitude, location.longitude);
             app.stationaryRadius.setRadius(radius);
             app.stationaryRadius.setCenter(center);
-
         });
 
         // BackgroundGeoLocation is highly configurable.
         backgroundGeoLocation.configure(callbackFn, failureFn, {
-            desiredAccuracy: 0,
+            desiredAccuracy: 10,
             stationaryRadius: 50,
             distanceFilter: 50,
+            locationTimeout: 30,
             notificationIcon: 'mappointer',
             notificationIconColor: '#FEDD1E',
             notificationTitle: 'Background tracking', // <-- android only, customize the title of the notification
@@ -290,7 +280,8 @@ var app = {
             activityType: 'AutomotiveNavigation',
             debug: true, // <-- enable this hear sounds for background-geolocation life-cycle.
             stopOnTerminate: false, // <-- enable this to clear background location settings when the app terminates
-            locationService: backgroundGeoLocation.service[ENV.settings.locationService]
+            locationService: backgroundGeoLocation.service[ENV.settings.locationService],
+            fastestInterval: 5000
         });
 
         // Turn ON the background-geolocation system.  The user will be tracked whenever they suspend the app.
@@ -405,10 +396,6 @@ var app = {
     onResume: function() {
         console.log('- onResume');
     },
-    // Update DOM on a Received Event
-    receivedEvent: function(id) {
-        console.log('Received Event: ' + id);
-    },
     startTracking: function () {
         backgroundGeoLocation.start();
         app.isTracking = true;
@@ -478,6 +465,29 @@ var app = {
         app.path.getPath().push(latlng);
         app.previousLocation = location;
     },
+    postLocationsWasOffline: function () {
+        app.db.find({}, function (err, locations) {
+            if (err) {
+                console.error('[ERROR]: while retrieving location data', err);
+            }
+            // nice recursion to prevent burst
+            (function postOneByOne (locations) {
+                var location = locations.pop();
+                if (!location) {
+                    return;
+                }
+                app.postLocation(location)
+                .done(function () {
+                    app.db.delete({ _id: location._id }, function (err) {
+                        if (err) {
+                            console.error('[ERROR]: deleting row %s', location._id, err);
+                        }
+                        postOneByOne(locations);
+                    });
+                });
+            })(locations || []);
+        });
+    },
     postLocation: function (data) {
         return $.ajax({
             url: app.postUrl,
@@ -493,6 +503,51 @@ var app = {
                 console.error('[ERROR]: inserting location data', err);
             }
         });
+    },
+    postLocationsWasKilled: function (locations) {
+        var anonDevice, filtered;
+
+        filtered = [].filter.call(locations, function(location) {
+            return location.debug === false;
+        });
+
+        if (!filtered || filtered.length === 0) {
+            return;
+        }
+
+        anonDevice = app.getDeviceInfo();
+
+        (function postOneByOne (locations) {
+            var location = locations.pop();
+            if (!location) {
+                return;
+            }
+            var data = {
+                location: {
+                    uuid: new Date().getTime(),
+                    timestamp: location.time,
+                    battery: {},
+                    coords: location,
+                    service_provider: 'SQLITE'
+                },
+                device: anonDevice
+            };
+
+            app.postLocation(data).done(function () {
+                backgroundGeoLocation.deleteLocation(location.locationId,
+                    function () {
+                        console.log('[DEBUG]: location %s deleted', location.locationId);
+                        postOneByOne(locations);
+                    },
+                    function (err) {
+                        if (err) {
+                            console.error('[ERROR]: deleting locationId %s', location.locationId, err);
+                        }
+                        postOneByOne(locations);
+                    }
+                );
+            });
+        })(filtered || []);
     }
 };
 

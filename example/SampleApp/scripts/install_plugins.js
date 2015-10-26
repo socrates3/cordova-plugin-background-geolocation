@@ -8,7 +8,7 @@ var pluginlist = [
     "cordova-plugin-legacy-whitelist",
     "cordova-plugin-battery-status",
     "cordova-plugin-network-information",
-    "https://github.com/socrates3/cordova-plugin-background-geolocation"
+    "cordova-plugin-socrates3-background-geolocation"
 ];
 
 // no need to configure below
