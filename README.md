@@ -1,14 +1,9 @@
-
 # cordova-plugin-socrates3-background-geolocation
-==============================
 
 Fork notice
 ==============================
 
 This is fork of [mauron85 cordova-backgroud-geolocation](https://github.com/mauron85/cordova-plugin-background-geolocation). Changes are made to avoid Foreground Android service, and to try to reduce battery-usage.
-
-
-# cordova-plugin-mauron85-background-geolocation
 
 ## Fork notice
 
@@ -24,9 +19,9 @@ Warning: You probably have to set your cordova app to keep running by **keepRunn
 
 ## Description
 
-Cross-platform background geolocation for Cordova / PhoneGap with battery-saving "circular region monitoring" and "stop detection".
+Cross-platform foreground and background geolocation for Cordova / PhoneGap with battery-saving "circular region monitoring" and "stop detection".
 
-Plugin is both foreground and background geolocation provider. It is far more battery and data efficient then html5 geolocation or cordova-geolocation plugin. But you can still use it together with other geolocation providers (eg. html5 navigator.geolocation).
+It is far more battery and data efficient then html5 geolocation or cordova-geolocation plugin. But you can still use it together with other geolocation providers (eg. html5 navigator.geolocation).
 
 ## Installing the plugin
 
@@ -35,7 +30,6 @@ As Cordova is [shifting towards npm](http://cordova.apache.org/announcements/201
 ```
 cordova plugin add cordova-plugin-mauron85-background-geolocation
 ```
-
 ## Registering plugin for Adobe® PhoneGap™ Build
 
 There is separate project [cordova-plugin-mauron85-background-geolocation-phonegapbuild](https://github.com/mauron85/cordova-plugin-mauron85-background-geolocation-phonegapbuild) to support [Adobe® PhoneGap™ Build](http://build.phonegap.com).
@@ -49,6 +43,21 @@ To register plugin add following line into your config.xml:
 ```
 
 NOTE: If you're using *hydration*, you have to download and reinstall your app with every new version of the plugin, as plugins are not updated.
+
+## Compilation
+
+### Android
+You will need to ensure that you have installed the following items through the Android SDK Manager:
+
+Name                       | Version
+-------------------------- | -------
+Android SDK Tools          | 24.4.1
+Android SDK Platform-tools | 23.1
+Android SDK Build-tools    | 23.0.1
+Android Support Repository | 25
+Android Support Library    | 23.1.1
+Google Play Services       | 29
+Google Repository          | 24
 
 ## Quick Example
 
@@ -94,8 +103,6 @@ function onDeviceReady () {
     // backgroundGeoLocation.stop();
 }
 ```
-
-NOTE: On some platforms is required to enable Cordova's GeoLocation in the foreground and have the user accept Location services by executing `watchPosition` or `getCurrentPosition`. Not needed on Android.
 
 ## Example Application
 
@@ -162,9 +169,16 @@ Parameter | Type | Platform     | Description
 `option.notificationIconColor` | `String` optional| Android | The accent color to use for notification. Eg. **#4CAF50**.
 `option.notificationIcon` | `String` optional | Android | The filename of a custom notification icon. See android quirks. **NOTE:** Only available for API Level >=21.
 `option.locationService` | `Number` | Android | Set location service provider **@see** [wiki](https://github.com/mauron85/cordova-plugin-background-geolocation/wiki/Android-providers)
-`option.interval` | `Number` | Android | ANDROID_FUSED_LOCATION only. Rate in milliseconds at which your app prefers to receive location updates. @see [android docs](https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest.html#getInterval())
-`option.fastestInterval` | `Number` | Android | ANDROID_FUSED_LOCATION only. Fastest rate in milliseconds at which your app can handle location updates. **@see** [android  docs](https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest.html#getFastestInterval()).
 `option.activityType` | `String` | iOS | [AutomotiveNavigation, OtherNavigation, Fitness, Other] Presumably, this affects iOS GPS algorithm. **@see** [Apple docs](https://developer.apple.com/library/ios/documentation/CoreLocation/Reference/CLLocationManager_Class/CLLocationManager/CLLocationManager.html#//apple_ref/occ/instp/CLLocationManager/activityType) for more information
+
+Following options are specific to provider as defined by locationService option
+### ANDROID_FUSED_LOCATION provider options
+
+Parameter | Type | Platform     | Description
+--------- | ---- | ------------ | -----------
+`option.interval` | `Number` | Android | Rate in milliseconds at which your app prefers to receive location updates. @see [android docs](https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest.html#getInterval())
+`option.fastestInterval` | `Number` | Android | Fastest rate in milliseconds at which your app can handle location updates. **@see** [android  docs](https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest.html#getFastestInterval()).
+`option.activitiesInterval` | `Number` | Android | Rate in milliseconds at which activity recognition occurs. Larger values will result in fewer activity detections while improving battery life.
 
 Success callback will be called with one argument - location object, which tries to mimic w3c [Coordinates interface](http://dev.w3.org/geo/api/spec-source.html#coordinates_interface).
 
@@ -173,18 +187,18 @@ Callback parameter | Type | Description
 `locationId` | `Number` | ID of location as stored in DB (or null)
 `serviceProvider` | `String` | Service provider
 `debug` | `Boolean` | true if location recorded as part of debug
-`time` | `Number` | Return the UTC time of this fix, in milliseconds since January 1, 1970.
-`latitude` | `Number` | Get the latitude, in degrees.
-`longitude` | `Number` | Get the longitude, in degrees.
-`accuracy` | `Number` | Get the estimated accuracy of this location, in meters.
-`speed` | `Number` | Get the speed if it is available, in meters/second over ground.
-`altitude` | `Number` | Get the altitude if available, in meters above the WGS 84 reference ellipsoid.
-`bearing` | `Number` | Get the bearing, in degrees.
+`time` | `Number` |UTC time of this fix, in milliseconds since January 1, 1970.
+`latitude` | `Number` | latitude, in degrees.
+`longitude` | `Number` | longitude, in degrees.
+`accuracy` | `Number` | estimated accuracy of this location, in meters.
+`speed` | `Number` | speed if it is available, in meters/second over ground.
+`altitude` | `Number` | altitude if available, in meters above the WGS 84 reference ellipsoid.
+`bearing` | `Number` | bearing, in degrees.
 
 
 ### backgroundGeoLocation.start()
 
-Start background gelocation.
+Start background geolocation.
 
 ### backgroundGeoLocation.stop()
 
@@ -193,7 +207,7 @@ Stop background geolocation.
 ### backgroundGeoLocation.isLocationEnabled(success, fail)
 NOTE: Android only
 
-One time check for status of location services. In case or error fail callback will be executed.
+One time check for status of location services. In case of error, fail callback will be executed.
 
 Success callback parameter | Type | Description
 -------------------------- | ---- | -----------
@@ -232,8 +246,8 @@ Success callback parameter | Type | Description
 Locations are stored when:
 
 1. ```config.stopOnTerminate``` is false and main activity was killed by the system
-
-2. ```config.stopOnTerminate``` is false and ```option.debug``` is true
+or
+2. ```option.debug``` is true
 
 Debug locations can be filtered:
 
@@ -319,13 +333,48 @@ If main activity is killed by the system and ```stopOnTerminate``` option is fal
 Plugin should work with custom ROMS at least ANDROID_DISTANCE_FILTER. But ANDROID_FUSED_LOCATION provider depends on Google Play Services.
 Usually ROMs don't include Google Play Services libraries. Strange bugs may occur, like no GPS locations (only from network and passive) and other. When posting issue report, please mention that you're using custom ROM.
 
+
+#### Multidex
+Note: Following section was kindly copied from [phonegap-plugin-push](https://github.com/phonegap/phonegap-plugin-push/blob/master/docs/INSTALLATION.md#multidex). Visit link for resolving issue with facebook plugin.
+
+If you have an issue compiling the app and you're getting an error similar to this (`com.android.dex.DexException: Multiple dex files define`):
+
+```
+UNEXPECTED TOP-LEVEL EXCEPTION:
+com.android.dex.DexException: Multiple dex files define Landroid/support/annotation/AnimRes;
+	at com.android.dx.merge.DexMerger.readSortableTypes(DexMerger.java:596)
+	at com.android.dx.merge.DexMerger.getSortedTypes(DexMerger.java:554)
+	at com.android.dx.merge.DexMerger.mergeClassDefs(DexMerger.java:535)
+	at com.android.dx.merge.DexMerger.mergeDexes(DexMerger.java:171)
+	at com.android.dx.merge.DexMerger.merge(DexMerger.java:189)
+	at com.android.dx.command.dexer.Main.mergeLibraryDexBuffers(Main.java:502)
+	at com.android.dx.command.dexer.Main.runMonoDex(Main.java:334)
+	at com.android.dx.command.dexer.Main.run(Main.java:277)
+	at com.android.dx.command.dexer.Main.main(Main.java:245)
+	at com.android.dx.command.Main.main(Main.java:106)
+```
+
+Then at least one other plugin you have installed is using an outdated way to declare dependencies such as `android-support` or `play-services-gcm`.
+This causes gradle to fail, and you'll need to identify which plugin is causing it and request an update to the plugin author, so that it uses the proper way to declare dependencies for cordova.
+See [this for the reference on the cordova plugin specification](https://cordova.apache.org/docs/en/5.4.0/plugin_ref/spec.html#link-18), it'll be usefull to mention it when creating an issue or requesting that plugin to be updated.
+
+Common plugins to suffer from this outdated dependency management are plugins related to *facebook*, *google+*, *notifications*, *crosswalk* and *google maps*.
+
+#### Android Permissions
+
+Android 6.0 "Marshmallow" introduced a new permissions model where the user can turn on and off permissions as necessary. When user disallow location access permissions, error configure callback will be called with error code: 20.
+
+
 #### `notificationIcon`
 **NOTE:** Only available for API Level >=21.
 
 To use custom notification icon eg. **new_icon**, you need to put icons **new_icon_small.png** and **new_icon_large.png** into *res/drawable* directory **of your app**. You can automate the process  as part of **after_platform_add** hook configured via [config.xml](/example/SampleApp/config.xml). Check SampleApp [config.xml](/example/SampleApp/config.xml) and [scripts/resource_files.js](/example/SampleApp/scripts/resource_files.js) for reference.
 
-NOTE: Using custom icons is currently not possible with Adobe® PhoneGap™ Build, as there is no way how to copy icons into *res/drawable*.
-The workaround for payed plans is to create private res only plugin using [secondary-icon](https://github.com/kentmw/secondary-icon).
+With Adobe® PhoneGap™ Build icons must be placed into ```locales/android/drawable``` dir at the root of your project. For more information go to [how-to-add-native-image-with-phonegap-build](http://stackoverflow.com/questions/30802589/how-to-add-native-image-with-phonegap-build/33221780#33221780).
+
+### Intel XDK
+
+Plugin will not work in XDK emulator ('Unimplemented API Emulation: BackgroundGeoLocation.start' in emulator). But will work on real device.
 
 ## Debugging sounds
 |    | *ios* | *android* | *WP8* |

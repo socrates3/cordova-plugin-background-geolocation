@@ -1,6 +1,6 @@
-AbstractLocationService.java --> //startForeground(startId, notification);
-DistanceFilterLocationService.java --> //stopForeground(true);
-FusedLocationService.java --> //stopForeground(true);
+AbstractLocationService.java --> //startForeground(startId, notification);   //stopForeground(true);
+OLD: DistanceFilterLocationService.java --> //stopForeground(true);
+OLD: FusedLocationService.java --> //stopForeground(true);
 
 example/SampleApp/scripts/install_plugins.js --> "cordova-plugin-socrates3-background-geolocation"
 
