@@ -1,3 +1,12 @@
+# cordova-plugin-socrates3-background-geolocation
+==============================
+
+Fork notice
+==============================
+
+This is fork of [mauron85 cordova-backgroud-geolocation](https://github.com/mauron85/cordova-plugin-background-geolocation). Changes are made to avoid Foreground Android service, and to try to reduce battery-usage.
+
+
 # cordova-plugin-mauron85-background-geolocation
 
 ## Fork notice
