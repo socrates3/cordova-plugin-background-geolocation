@@ -1,9 +1,4 @@
-# cordova-plugin-socrates3-background-geolocation
-
-Fork notice
-==============================
-
-This is fork of [mauron85 cordova-backgroud-geolocation](https://github.com/mauron85/cordova-plugin-background-geolocation). Changes are made to avoid Foreground Android service, and to try to reduce battery-usage.
+# cordova-plugin-mauron85-background-geolocation
 
 ## Fork notice
 
@@ -32,14 +27,11 @@ cordova plugin add cordova-plugin-mauron85-background-geolocation
 ```
 ## Registering plugin for Adobe® PhoneGap™ Build
 
-There is separate project [cordova-plugin-mauron85-background-geolocation-phonegapbuild](https://github.com/mauron85/cordova-plugin-mauron85-background-geolocation-phonegapbuild) to support [Adobe® PhoneGap™ Build](http://build.phonegap.com).
-
-The reason is that PhoneGap™ Build doesn't support ```<framework src="com.google.android.gms:play-services-location:+" />``` config option, so instead [cordova-plugin-googleplayservices](https://github.com/floatinghotpot/google-play-services) is used as dependency.
-
+This plugin should work with Adobe® PhoneGap™ Build without any modification.
 To register plugin add following line into your config.xml:
 
 ```
-<gap:plugin name="cordova-plugin-mauron85-background-geolocation-phonegapbuild" source="npm"/>
+<gap:plugin name="cordova-plugin-mauron85-background-geolocation" source="npm"/>
 ```
 
 NOTE: If you're using *hydration*, you have to download and reinstall your app with every new version of the plugin, as plugins are not updated.
@@ -179,6 +171,7 @@ Parameter | Type | Platform     | Description
 `option.interval` | `Number` | Android | Rate in milliseconds at which your app prefers to receive location updates. @see [android docs](https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest.html#getInterval())
 `option.fastestInterval` | `Number` | Android | Fastest rate in milliseconds at which your app can handle location updates. **@see** [android  docs](https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest.html#getFastestInterval()).
 `option.activitiesInterval` | `Number` | Android | Rate in milliseconds at which activity recognition occurs. Larger values will result in fewer activity detections while improving battery life.
+`option.stopOnStillActivity` | `Boolean` | Android | stop() is forced, when the STILL activity is detected (default is true)
 
 Success callback will be called with one argument - location object, which tries to mimic w3c [Coordinates interface](http://dev.w3.org/geo/api/spec-source.html#coordinates_interface).
 
@@ -390,16 +383,6 @@ Plugin will not work in XDK emulator ('Unimplemented API Emulation: BackgroundGe
 
 ## Geofencing
 There is nice cordova plugin [cordova-plugin-geofence](https://github.com/cowbell/cordova-plugin-geofence), which does exactly that. Let's keep this plugin lightweight as much as possible.
-
-## Development
-
-There are many works of original christocracy's plugin. The most interesting repos I've found are:
-* [huttj](https://github.com/huttj/cordova-plugin-background-geolocation)
-* [erikkemperman](https://github.com/erikkemperman/cordova-plugin-background-geolocation/)
-* [codebling](https://github.com/codebling/cordova-plugin-background-geolocation)
-
-Lot of work has been done, but scattered all over the github. My intention is to maintain
-this version and adopt all those cool changes. You're more then welcome to pull your request here.
 
 ## Changelog
 
